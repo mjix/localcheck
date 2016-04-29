@@ -1,5 +1,5 @@
 # localcheck
-check localstorage file is valid; support hash check;
+load static file to localstorage and update when file changed; browser support:ie7+
 
 > [localcheck.js](http://www.molo.com.cn/localcheck.js/) fork from basket.js; is a script loader for caching and loading scripts using localStorage;
 
