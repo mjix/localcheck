@@ -17,6 +17,7 @@
         setItem : emptyFn,
         getItem : emptyFn,
         removeItem : emptyFn,
+        clear : emptyFn,
         length : 0
     };
 
@@ -45,7 +46,7 @@
             }
         };
 
-        _export = {
+        var _export = {
             resolve : function(data){
                 if(_tempData.success){
                     _tempData.success.call(this, data);
@@ -194,9 +195,9 @@
             tempLen = content.substr(elen, extlenLength),
             tempStr, tempArr, tempItem, ext = {};
         tempLen = parseInt(tempLen, 10);
-        tempStr = content.substr(elen-tempLen, tempLen-1);
+        tempStr = content.substr(elen-tempLen-1, tempLen-1);
         tempArr = tempStr.split('&');
-
+        
         for(var l=tempArr.length-1; l>-1; l--){
             tempItem = tempArr[l].split('=');
             ext[_unescape(tempItem[0])] = _unescape(tempItem[1]);
@@ -270,6 +271,7 @@
     };
 
     var addLocalStorage = function(key, content, extInfo){
+        content = content || '';
         key = storagePrefix + key;
         extInfo = extInfo||{};
 
@@ -310,6 +312,35 @@
     var _export = {};
     _export.isValidItem = null;
 
+    _export.get = function(key){
+        key = storagePrefix + key;
+        return decodeContent(lStore.getItem(key));
+    };
+
+    _export.set = function(key, content, ext){
+        if(key){
+            var storeObj = wrapStoreData(ext||{});
+            return addLocalStorage(key, content, storeObj);
+        }
+        return false;
+    };
+
+    _export.remove = function(key) {
+        key = storagePrefix + key;
+        lStore.removeItem(key);
+        return this;
+    };
+
+    _export.clear = function(expired){
+        if(expired){
+            clearLocalStorage();
+        }else{
+            lStore.clear();
+        }
+        
+        return this;
+    };
+
     var isCacheValid = function(source, obj) {
         return !source ||
             source.ext.expire - +new Date() < 0  ||
@@ -318,17 +349,21 @@
     };
 
     var wrapStoreData = function(ext, data) {
+        data = data || {};
         var now = +new Date();
-        ext.type = ext.type || data.type;
-        ext.originalType = data.type;
+        ext.originalType = data.type||'';
+        ext.type = ext.type || ext.originalType;
         ext.stamp = now;
         ext.expire = now + ((ext.expire || defaultExpiration)*60*60*1000);
         return ext;
     };
 
     var saveUrl = function(obj) {
-        var deferred = Deferred();
-        _ajax.send(obj.url, {
+        var deferred = Deferred(),
+            url = obj._url;
+        delete obj._url;
+
+        _ajax.send(url, {
             success : function(data, xhr){
                 var storeObj = wrapStoreData(obj, data);
 
@@ -359,9 +394,10 @@
         obj.execute = obj.execute !== false;
         shouldFetch = isCacheValid(source, obj);
 
+        obj._url = obj.url;
         if(obj.live || shouldFetch){
             if(obj.unique){
-                obj.url += ((obj.url.indexOf('?') > 0 ) ? '&' : '?' ) + 'localcheck-unique=' + obj.unique;
+                obj._url += ((obj.url.indexOf('?') > 0 ) ? '&' : '?' ) + 'localcheck-unique=' + obj.unique;
             }
 
             promise = saveUrl(obj);
@@ -392,22 +428,6 @@
         }
     };
 
-    _export.get = function(key){
-        key = storagePrefix + key;
-        return decodeContent(lStore.getItem(key));
-    };
-
-    _export.remove = function(key) {
-        key = storagePrefix + key;
-        lStore.removeItem(key);
-        return this;
-    };
-
-    _export.clear = function(){
-        clearLocalStorage();
-        return this;
-    };
-
     _export.require = function(){
         if(arguments.length<1){
             return ;
@@ -436,6 +456,9 @@
 
         return deferred.promise();
     };
+
+    //clear expired cache
+    _export.clear(true);
 
     window.LocalCheck = _export;
     return _export;
