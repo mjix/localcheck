@@ -75,6 +75,7 @@ or u can set template block in file; like
 ```html
 <script type="text/javascript">
     /*<localcheck>*/ //here put localcheck config /*</localcheck>*/
+    //var gFileHashConfig={"app/index.js":"b2bfe44f2e870e08b4723fe5de484cd6","main.js":"982468f508e7053603eb2a5d355c57aa"};
 </script>
 ```
 
