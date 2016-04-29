@@ -45,14 +45,13 @@ LocalCheck.require({
 ### customize
 
 ```javascript
--   LocalCheck.set(key, value, {expire:1}); // cache one hour;
+    LocalCheck.set(key, value, {expire:1}); // cache one hour;
 
--   LocalCheck.get(key); //{content:'1', ext:{expire:timestamp, stamp:set timestamp, type:data mimetype}}
+    LocalCheck.get(key); //{content:'1', ext:{expire:timestamp, stamp:set timestamp, type:data mimetype}}
 
--   LocalCheck.remove(key); //delete cache by key
+    LocalCheck.remove(key); //delete cache by key
 
--   LocalCheck.clear(expired); //expired If expired is true then only items that have expired will be removed. Otherwise all items are removed.
-//LocalCheck.require([]) or LocalCheck.require({}, {})
+    LocalCheck.clear(expired); //expired is true expired item will be removed. Otherwise removed all.
 ```
 
 ## grunt-localcheck
