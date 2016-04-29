@@ -195,7 +195,7 @@
             tempLen = content.substr(elen, extlenLength),
             tempStr, tempArr, tempItem, ext = {};
         tempLen = parseInt(tempLen, 10);
-        tempStr = content.substr(elen-tempLen-1, tempLen-1);
+        tempStr = content.substr(elen-tempLen-1, tempLen);
         tempArr = tempStr.split('&');
         
         for(var l=tempArr.length-1; l>-1; l--){
