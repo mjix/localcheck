@@ -95,10 +95,9 @@
 
         for(var l=allPromise.length-1; l>-1; l--){
             allPromise[l].callback = callback;
-            if(allPromise[l].isOver){
-                callback();
-            }
         }
+        
+        callback();
         return deferred.promise();
     };
 
