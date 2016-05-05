@@ -34,10 +34,13 @@ module.exports = function(grunt){
             },
             all : {
                 expand: true,
-                cwd: '../static/js/',
+                cwd: 'js/',
                 src: ['**/*.js'],
                 dest: '../static/js',
-                hashConfigTo : '../index.html'
+                hashConfigTo : '../index.html',
+                getConfigKey : function(src, dest){
+                    return src.substr(3);
+                }
             }
         },
 
