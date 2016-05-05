@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>localcheck requirejs</title>
+
+<style type="text/css">
+*{padding: 0; margin: 0; font-size: 13px; }
+h1{text-align: center; font-size: 30px; font-weight: normal;}
+button{padding: 3px 5px; background: #eee; border:1px #999 solid; margin-left: 20px;}
+.main{ padding: 20px 0; margin: 20px; border:1px #ddd solid;}
+</style>
+</head>
+<body>
+
+<div class="main">
+
+    <h1>loading</h1>
+    <button id="detail-btn">click to detail page</button>
+</div>
+
+<script type="text/javascript">
+var _g_currentCacheVersion = 'v3';
+
+function main(){
+    //check all cache version.
+    var cacheVerInfo = LocalCheck.get('version');
+    if(cacheVerInfo.content!=_g_currentCacheVersion){
+        LocalCheck.clear();
+        LocalCheck.set('version', _g_currentCacheVersion);
+    }
+
+    //load requirejs
+    LocalCheck.require({
+        url : './static/lib/require-2.1.16.min.js'
+    }).done(function(){
+        initRequirejsLoader();
+        LocalCheck.require({
+            url : './static/js/main.js',
+            unique : gFileHashConfig['main']
+        });
+    });
+}
+</script>
+
+<script type="text/javascript">
+/*<localcheck>*/var gFileHashConfig={"app/detail":"c254269bd295428a3703f22343fdcb01","app/index":"a9f7e4bb9bf5fdd5cbf91ed2a6ace536","main":"882f1ceafcfdc222ee4ce4182b929720"};/*</localcheck>*/
+
+/*<localinclude file="../../dist/localcheck.min.js">*/ /*</localinclude>*/
+
+function initRequirejsLoader(){
+/*<localinclude file="../../dist/requirejs-localcheck.min.js">*/ /*</localinclude>*/
+}
+
+main();
+</script>
+
+</body>
+</html>
