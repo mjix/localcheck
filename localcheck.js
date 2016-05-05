@@ -335,16 +335,19 @@
         if(expired){
             clearLocalStorage();
         }else{
-            lStore.clear();
+            for (var key in localStorage) {
+                if(key.indexOf(storagePrefix) === 0){
+                    lStore.removeItem(key);
+                }
+            }
         }
-        
         return this;
     };
 
-    var isCacheValid = function(source, obj) {
+    var isCacheInvalid = function(source, obj) {
         return !source ||
             source.ext.expire - +new Date() < 0  ||
-            obj.unique !== source.ext.unique ||
+            obj.unique != source.ext.unique ||
             (_export.isValidItem && !_export.isValidItem(source, obj));
     };
 
@@ -355,6 +358,9 @@
         ext.type = ext.type || ext.originalType;
         ext.stamp = now;
         ext.expire = now + ((ext.expire || defaultExpiration)*60*60*1000);
+        if(ext.hasOwnProperty('unique')){
+            ext.unique = ext.unique || '';
+        }
         return ext;
     };
 
@@ -392,7 +398,7 @@
         obj.key =  obj.key || obj.url;
         source = _export.get(obj.key);
         obj.execute = obj.execute !== false;
-        shouldFetch = isCacheValid(source, obj);
+        shouldFetch = isCacheInvalid(source, obj);
 
         obj._url = obj.url;
         if(obj.live || shouldFetch){

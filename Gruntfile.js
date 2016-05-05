@@ -9,7 +9,8 @@ module.exports = function(grunt){
                     banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
                 },
                 files: {
-                    './dist/localcheck.min.js' : ['./localcheck.js']
+                    './dist/localcheck.min.js' : ['./localcheck.js'],
+                    './dist/requirejs-localcheck.min.js' : ['./requirejs-localcheck.js']
                 }
             }
         },
