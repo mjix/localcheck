@@ -62,7 +62,7 @@ module.exports = function(grunt){
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('localcheck');
+    grunt.loadNpmTasks('grunt-localcheck');
     
     grunt.registerTask('build', ['uglify:all', 'localcheck:all']);
 };
