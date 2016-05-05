@@ -20,7 +20,9 @@ more options to use
 ```javascript
 LocalCheck.require({
     url : './static/js/main.js',
-    unique : gFileHashConfig['main.js'] //gFileHashConfig global variable created by grunt-localcheck
+
+    //gFileHashConfig global variable created by grunt-localcheck
+    unique : gFileHashConfig['main.js']
 });
 
 //LocalCheck.require([]) or LocalCheck.require({}, {})
@@ -34,7 +36,7 @@ LocalCheck.require({
     How long (in hours) before the cached item expires.
     
     #### unique
-    detect cache data changed
+    detect cache data changed, like hash of cachefile
     
     #### type
     data mime type; decide how to execute data
@@ -58,15 +60,22 @@ LocalCheck.require({
 copy node_modules/localcheck to upath/node_modules; then config like
 ```javascript
 localcheck : {
-    options : { //ltrip absolute path
-        substrstart : '../static/js/'.length
-    },
     all : {
-        expand: true,
-        cwd: '../static/js/',
-        src: ['**/*.js'],
-        dest: '../static/js',
-        hashConfigTo : '../index.html' //create gFileHashConfig 
+        options : {},
+        files: [{
+            expand: true,
+            cwd: 'js/',
+            src: '**/*.js',
+            dest: '../static/js',
+
+            //create gFileHashConfig,
+            hashConfigTo : '../index.html',
+
+            //format file key
+            getConfigKey : function(src, dest){ //ltrim "js/"
+                return src.substr(3);
+            }
+        }]
     }
 }
 ```
@@ -76,6 +85,13 @@ or u can set template block in file; like
 <script type="text/javascript">
     /*<localcheck>*/ //here put localcheck config /*</localcheck>*/
     //var gFileHashConfig={"app/index.js":"b2bfe44f2e870e08b4723fe5de484cd6","main.js":"982468f508e7053603eb2a5d355c57aa"};
+</script>
+```
+
+```html
+<script type="text/javascript">
+    //to include ./js/localcheck.min.js file
+    /*<localinclude file="./js/localcheck.min.js">*/ /*</localinclude>*/
 </script>
 ```
 
