@@ -61,15 +61,18 @@ copy node_modules/localcheck to upath/node_modules; then config like
 ```javascript
 localcheck : {
     all : {
-        options : {},
+        options : { //format file which need to include
+            formatInclude : ['../indexnew.html']
+        },
         files: [{
             expand: true,
             cwd: 'js/',
             src: '**/*.js',
             dest: '../static/js',
 
-            //create gFileHashConfig,
-            hashConfigTo : '../index.html',
+            //create var gJSFileHashConfig,
+            hashConfigName : 'gJSFileHashConfig',
+            hashConfigDestFile : '../index.html',
 
             //format file key
             getConfigKey : function(src, dest){ //ltrim "js/"
@@ -83,8 +86,8 @@ localcheck : {
 or u can set template block in file; like
 ```html
 <script type="text/javascript">
-    /*<localcheck>*/ //here put localcheck config /*</localcheck>*/
-    //var gFileHashConfig={"app/index.js":"b2bfe44f2e870e08b4723fe5de484cd6","main.js":"982468f508e7053603eb2a5d355c57aa"};
+    /*<localcheck id="gJSFileHashConfig">*/ //here put localcheck config /*</localcheck>*/
+    //var gJSFileHashConfig={"app/index.js":"b2bfe44f2e870e08b4723fe5de484cd6","main.js":"982468f508e7053603eb2a5d355c57aa"};
 </script>
 ```
 

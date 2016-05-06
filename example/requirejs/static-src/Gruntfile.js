@@ -30,13 +30,28 @@ module.exports = function(grunt){
 
         localcheck : {
             all : {
-                options : {},
+                options : {
+                    formatInclude : ['../index.html']
+                },
                 files: [{
                     expand: true,
                     cwd: 'js/',
                     src: '**/*.js',
                     dest: '../static/js',
-                    hashConfigTo : '../index.html',
+
+                    hashConfigName : 'gJSFileHashConfig',
+                    hashConfigDestFile : '../index.html',
+                    getConfigKey : function(src, dest){ //{src:"app/index.js"}
+                        return src.substr(3, src.length-6);
+                    }
+                },{
+                    expand: true,
+                    cwd: 'js/',
+                    src: '**/*.js',
+                    dest: '../static/js',
+
+                    hashConfigName : 'gJSFileHashConfigx',
+                    hashConfigDestFile : '../index.html',
                     getConfigKey : function(src, dest){ //{src:"app/index.js"}
                         return src.substr(3, src.length-6);
                     }

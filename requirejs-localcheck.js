@@ -15,7 +15,7 @@
 
             LocalCheck.require({url:url, unique:unique}).done(function(){
                 context.completeLoad(moduleName);
-            }, function (error) {
+            }).fail(function (error) {
                 // TODO: Support path fallback.
                 context.onError(error);
             });

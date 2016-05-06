@@ -34,6 +34,7 @@
                 if(promiseObject.data){
                     fn && fn.call(this, promiseObject.data);
                 }
+                return this;
             },
 
             fail : function(fn){
@@ -43,6 +44,7 @@
                 if(_tempData.failargs){
                     fn && fn.call(this, _tempData.failargs);
                 }
+                return this;
             }
         };
 
@@ -96,7 +98,7 @@
         for(var l=allPromise.length-1; l>-1; l--){
             allPromise[l].callback = callback;
         }
-        
+
         callback();
         return deferred.promise();
     };

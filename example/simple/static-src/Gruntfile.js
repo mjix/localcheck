@@ -29,18 +29,21 @@ module.exports = function(grunt){
         },
 
         localcheck : {
-            options : {
-                substrstart : '../static/js/'.length
-            },
             all : {
-                expand: true,
-                cwd: 'js/',
-                src: ['**/*.js'],
-                dest: '../static/js',
-                hashConfigTo : '../index.html',
-                getConfigKey : function(src, dest){
-                    return src.substr(3);
-                }
+                options : {
+                    formatInclude : ['../index.html']
+                },
+                files: [{
+                    expand: true,
+                    cwd: 'js/',
+                    src: ['**/*.js'],
+                    dest: '../static/js',
+                    hashConfigName : 'gFileHashConfig',
+                    hashConfigDestFile : '../index.html',
+                    getConfigKey : function(src, dest){
+                        return src.substr(3);
+                    }
+                }]
             }
         },
 
