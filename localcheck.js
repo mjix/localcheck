@@ -303,7 +303,7 @@
 
     var execute = function(obj) {
         if(obj.ext.type && handlers[obj.ext.type]) {
-            return handlers[obj.type](obj);
+            return handlers[obj.ext.type](obj);
         }
 
         return handlers['default'](obj); // 'default' is a reserved word
@@ -456,12 +456,28 @@
 
         Deferred.all(promises).done(function(results){
             for(var i=0,l=results.length; i<l; i++){
-                execute(results[i]);
+                if(results[i].ext.execute){
+                    execute(results[i]);
+                }
             }
-            deferred.resolve(results);
+            deferred.resolve(results.length==1 ? results[0] : results);
         });
 
         return deferred.promise();
+    };
+
+    _export.addHandler = function(types, handler){
+        var tempType = getTypeof(types);
+        if(tempType != 'array'){
+            types = [types];
+        }
+        for(var i=0,l=types.length; i<l; i++){
+            handlers[types[i]] = handler;
+        }
+    };
+
+    _export.removeHandler = function(types) {
+        _export.addHandler(types, undefined);
     };
 
     //clear expired cache

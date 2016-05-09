@@ -13,11 +13,13 @@
                 unique = config.localcheck.unique[moduleName];
             }
 
-            LocalCheck.require({url:url, unique:unique}).done(function(){
-                context.completeLoad(moduleName);
-            }).fail(function (error) {
-                // TODO: Support path fallback.
-                context.onError(error);
+            requirejs.nextTick(function(){
+                LocalCheck.require({url:url, unique:unique}).done(function(){
+                    context.completeLoad(moduleName);
+                }).fail(function (error) {
+                    // TODO: Support path fallback.
+                    context.onError(error);
+                });
             });
         }
     };

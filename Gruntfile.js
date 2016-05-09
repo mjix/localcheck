@@ -6,11 +6,12 @@ module.exports = function(grunt){
         uglify: {
             all : {
                 options: {
-                    banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
+                    banner: '/*! <%= grunt.template.today("dd-mm-yyyy") %> */\n'
                 },
                 files: {
                     './dist/localcheck.min.js' : ['./localcheck.js'],
-                    './dist/requirejs-localcheck.min.js' : ['./requirejs-localcheck.js']
+                    './dist/requirejs-localcheck.min.js' : ['./requirejs-localcheck.js'],
+                    './dist/localcheck-css.min.js' : ['./localcheck-css.js']
                 }
             }
         },
