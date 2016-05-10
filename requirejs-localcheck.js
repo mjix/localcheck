@@ -3,18 +3,19 @@
     var original_loader = requirejs.load;
 
     requirejs.load = function (context, moduleName, url) {
-        var config = requirejs.s.contexts._.config;
-        if (config.localcheck && config.localcheck.excludes && config.localcheck.excludes[moduleName]) {
+        var config = requirejs.s.contexts._.config,
+            cl = config.localcheck || {};
+            cl.unique = cl.unique || {};
+            cl.excludes = cl.excludes || {};
+
+        if (cl.excludes[moduleName] || (cl.mustUnique && !cl.unique[moduleName])) {
             original_loader(context, moduleName, url);
-
+            
         } else {
-            var unique = false;
-            if(config.localcheck && config.localcheck.unique && config.localcheck.unique.hasOwnProperty(moduleName) ){
-                unique = config.localcheck.unique[moduleName];
-            }
-
+            var unique = cl.unique[moduleName] || false;
             requirejs.nextTick(function(){
-                LocalCheck.require({url:url, unique:unique}).done(function(){
+                var conf = {url:url, unique:unique};
+                LocalCheck.require(conf).done(function(){
                     context.completeLoad(moduleName);
                 }).fail(function (error) {
                     // TODO: Support path fallback.

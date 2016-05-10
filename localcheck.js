@@ -8,7 +8,8 @@
         _unescape = window.unescape,
         extlenLength = 6,
         stag = '/*',
-        etag = '*/';
+        etag = '*/',
+        _options = {};
     
     var storagePrefix = 'localcheck-',
         defaultExpiration = 5000;
@@ -174,9 +175,10 @@
         if(!content){
             return '';
         }
-        var tempArr = [], key, tempStr, slen;
+        var tempArr = [], key, tempStr, slen, tempType;
         for(key in ext){
-            if(!ext.hasOwnProperty(key)){
+            tempType = getTypeof(ext[key]);
+            if(!ext.hasOwnProperty(key) || (tempType!='string' && tempType!='number')){
                 continue;
             }
             tempArr.push(_escape(key) + '=' + _escape(ext[key]));
@@ -345,6 +347,15 @@
         return this;
     };
 
+    _export.clearOther = function(){
+        for (var key in localStorage) {
+            if(key.indexOf(storagePrefix) !== 0){
+                lStore.removeItem(key);
+            }
+        }
+        return this;
+    };
+
     var isCacheInvalid = function(source, obj) {
         return !source ||
             source.ext.expire - +new Date() < 0  ||
@@ -367,20 +378,22 @@
 
     var saveUrl = function(obj) {
         var deferred = Deferred(),
+            formatFn = obj.formatFn,
+            content = '',
             url = obj._url;
         delete obj._url;
 
         _ajax.send(url, {
             success : function(data, xhr){
                 var storeObj = wrapStoreData(obj, data);
-
-                if(!obj.skipCache){
-                    addLocalStorage(obj.key, data.content, storeObj);
+                content = formatFn ? formatFn(data.content) : data.content;
+                if(!obj.skipCache && content){
+                    addLocalStorage(obj.key, content, storeObj);
                 }
 
                 deferred.resolve({
                     ext : obj,
-                    content : data.content
+                    content : content
                 });
             },
             error : function(info){
@@ -456,7 +469,7 @@
 
         Deferred.all(promises).done(function(results){
             for(var i=0,l=results.length; i<l; i++){
-                if(results[i].ext.execute){
+                if(results[i] && results[i].ext.execute){
                     execute(results[i]);
                 }
             }
@@ -478,6 +491,21 @@
 
     _export.removeHandler = function(types) {
         _export.addHandler(types, undefined);
+    };
+
+    _export.setOption = function(name, val) {
+        var opts = {};
+        if(getTypeof(name) == 'string'){
+            opts[name] = val;
+        }else{
+            opts = name;
+        }
+
+        for(var key in opts){
+            if(opts.hasOwnProperty(key)){
+                _options[key] = opts[key];
+            }
+        }
     };
 
     //clear expired cache
