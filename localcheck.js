@@ -376,7 +376,7 @@
         return ext;
     };
 
-    var saveUrl = function(obj) {
+    var saveUrl = function(obj, source) {
         var deferred = Deferred(),
             formatFn = obj.formatFn,
             content = '',
@@ -397,7 +397,10 @@
                 });
             },
             error : function(info){
-                deferred.reject(info);
+                if(source){ //last cache
+                    return deferred.resolve(source);
+                }
+                deferred.reject(info, source);
             }
         });
 
@@ -414,17 +417,19 @@
         obj.execute = obj.execute !== false;
         shouldFetch = isCacheInvalid(source, obj);
 
+        if(source && source.ext){
+            source.ext.type = obj.type || source.ext.originalType;
+            source.ext.execute = obj.execute;
+        }
+
         obj._url = obj.url;
         if(obj.live || shouldFetch){
             if(obj.unique){
                 obj._url += ((obj.url.indexOf('?') > 0 ) ? '&' : '?' ) + 'localcheck-unique=' + obj.unique;
             }
 
-            promise = saveUrl(obj);
+            promise = saveUrl(obj, source);
         } else {
-            source.ext.type = obj.type || source.ext.originalType;
-            source.ext.execute = obj.execute;
-
             var deferred = Deferred();
             deferred.resolve(source);
             promise = deferred.promise();
