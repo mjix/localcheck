@@ -194,6 +194,13 @@
         if(!content){
             return false;
         }
+
+        //check footer correct!
+        var validReg = new RegExp("#[\\d]{"+extlenLength+"}"+etag.replace('*','\\*').replace('/','\/')+'$');
+        if(!validReg.test(content)){
+            return false;
+        }
+
         var elen = -etag.length-extlenLength, //# length
             tempLen = content.substr(elen, extlenLength),
             tempStr, tempArr, tempItem, ext = {};
@@ -237,13 +244,13 @@
             }
 
             info = decodeContent(localStorage[key]);
-            info.ext._key = key;
-
-            //out time
-            if(info.ext.expire<=now){
+            //incrrect or outtime
+            if(!info || info.ext.expire<=now){
                 lStore.removeItem(key);
                 continue;
             }
+
+            info.ext._key = key;
 
             allcache.push(info.ext);
         }
@@ -291,11 +298,26 @@
         }
     };
 
+    var throwError = function(msg){
+        throw new Error(msg);
+    };
+
+
+    var _export = {};
+    _export.isValidItem = null;
+
     var injectScript = function(obj) {
         if(obj.content){
-            (window.execScript || function(data){
-                window["eval"].call(window, data);
-            })(obj.content);
+            try{
+                (window.execScript || function(data){
+                    window["eval"].call(window, data);
+                })(obj.content);
+            }catch(e){
+                _export.remove(obj.ext.key); // error remove!
+                throwError(e.msg+"\n source file:"+obj.ext.url);
+            }
+        }else{
+            throwError("inject file["+obj.ext.url+"] content null");
         }
     };
 
@@ -311,18 +333,18 @@
         return handlers['default'](obj); // 'default' is a reserved word
     };
 
-
-    var _export = {};
-    _export.isValidItem = null;
-
     _export.get = function(key){
         key = storagePrefix + key;
-        return decodeContent(lStore.getItem(key));
+        var data = decodeContent(lStore.getItem(key));
+        if(!data){
+            _export.remove(key);
+        }
+        return data;
     };
 
     _export.set = function(key, content, ext){
         if(key){
-            var storeObj = wrapStoreData(ext||{});
+            var storeObj = wrapStoreData(ext||{}, content);
             return addLocalStorage(key, content, storeObj);
         }
         return false;
@@ -385,10 +407,9 @@
 
         _ajax.send(url, {
             success : function(data, xhr){
-                var storeObj = wrapStoreData(obj, data);
                 content = formatFn ? formatFn(data.content) : data.content;
                 if(!obj.skipCache && content){
-                    addLocalStorage(obj.key, content, storeObj);
+                    _export.set(obj.key, content, obj);
                 }
 
                 deferred.resolve({
