@@ -42,7 +42,7 @@ module.exports = function(grunt){
                     hashConfigName : 'gJSFileHashConfig',
                     hashConfigDestFile : '../index.html',
                     getConfigKey : function(src, dest){ //{src:"app/index.js"}
-                        return src.substr(3, src.length-6);
+                        return src.substring(3, src.length-3);
                     }
                 },{
                     expand: true,
@@ -53,7 +53,7 @@ module.exports = function(grunt){
                     hashConfigName : 'gJSFileHashConfigx',
                     hashConfigDestFile : '../index.html',
                     getConfigKey : function(src, dest){ //{src:"app/index.js"}
-                        return src.substr(3, src.length-6);
+                        return src.substring(3, src.length-3);
                     }
                 }]
             }

@@ -41,7 +41,7 @@ module.exports = function(grunt){
                     hashConfigName : 'gFileHashConfig',
                     hashConfigDestFile : '../index.html',
                     getConfigKey : function(src, dest){
-                        return src.substr(3);
+                        return src.substring(3);
                     }
                 }]
             }

@@ -534,9 +534,10 @@
         }
     };
 
+    _export.localStorage = lStore;
+
     //clear expired cache
     _export.clear(true);
-
     window.LocalCheck = _export;
     return _export;
 
